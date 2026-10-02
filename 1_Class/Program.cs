@@ -183,6 +183,7 @@
         }
 
         /// <summary>
+        /// 
         /// 5. Форматированный вывод всех студентов со связями.
         /// </summary>
         static void PrintAllStudents(List<Student> students, List<Group> groups, List<Faculty> faculties)
