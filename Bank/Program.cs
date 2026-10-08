@@ -34,7 +34,29 @@ namespace Bank
             Console.WriteLine(interestEarning); // автоматически вызывает ToString()
             Console.WriteLine(interestEarning.GetAccountHistory());
 
-            Console.ReadLine();
+            LineOfCreditAccount lineOfCredit = new LineOfCreditAccount("Yana", 1000m, 1000m);
+            lineOfCredit.MakeWithdrawal(500m, DateTime.UtcNow, "credit");
+
+            GiftCardAccount giftcart = new GiftCardAccount("Yana", 1000m, 5000m);
+
+            List<BankAccount> accounts = new List<BankAccount>();
+            accounts.Add(account1);
+            accounts.Add(interestEarning);
+            accounts.Add(lineOfCredit);
+            accounts.Add(giftcart);
+
+            foreach (BankAccount account in accounts)
+            {
+                Console.WriteLine(account);
+                account.PerformMonthAndTransitions();
+                Console.WriteLine(account.GetAccountHistory());
+            }
+
+            lineOfCredit.MakeWithdrawal(600m, DateTime.UtcNow, "credit");
+            Console.WriteLine(lineOfCredit.GetAccountHistory());
+
+
+
         }
     }
 }
