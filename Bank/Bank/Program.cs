@@ -1,33 +1,25 @@
-﻿namespace Bank
+﻿using System;
+
+namespace Bank;
+
+internal class Program
 {
-    internal class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
+        BankAccount accountA = new BankAccount("Ivanov", 25000m);
+        accountA.Status = BankStatus.Premium;
 
+        BankAccount accountB = new BankAccount("Petrov", 5000m);
+        accountB.Status = BankStatus.VIP;
 
+        Console.WriteLine("\nВыполняем перевод денег (Задача 3)");
+        BankService.Transfer(accountA, accountB, 5000m);
 
-            BankAccount account1 = new BankAccount("Yana", 100000);
-            BankAccount account2 = new BankAccount("Lena", 10);
-            Console.WriteLine($"account {account1.Balance} №{account1.Number} {account1.Owner}");
-            Console.WriteLine($"account {account2.Balance} №{account2.Number} {account2.Owner}");
+        Console.WriteLine("\nКонец месяца (Задача 1)");
+        accountA.PerformMonthAndTransitions();
+        accountB.PerformMonthAndTransitions();
 
-            account1.MakeDeposit(2000000, DateTime.UtcNow, ":)");
-            Console.WriteLine(account1.Balance);
-            account1.MakeWithdrawal(200, DateTime.UtcNow, ":(");
-            Console.WriteLine(account1.Balance);
-
-            Console.WriteLine(account1.GetAccountHistory);
-
-            try
-            {
-                account2.MakeWithdrawal(10000, DateTime.UtcNow, ":(");
-            }
-            catch (InvalidOperationException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-        }
+        Console.WriteLine("\nИстория счета Петрова (VIP)");
+        Console.WriteLine(accountB.GetAccountHistory());
     }
 }
