@@ -1,5 +1,4 @@
-﻿using _3_SOLID_Game;
-using System;
+﻿using System;
 
 namespace _3_SOLID_Game
 {
@@ -7,45 +6,69 @@ namespace _3_SOLID_Game
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== Тест Логики Игры ===");
-
             IGameConfig config = new DefaultGameConfig();
             GameEngine engine = new GameEngine(config);
 
-            engine.StartNewGame();
-            Console.WriteLine($"Загадано число от {config.MinNumber} до {config.MaxNumber}. У вас {config.MaxAttempts} попыток.");
+            // 3. Подписываемся на события движка игры с помощью оператора +=
+            engine.OnGameStarted += DisplayGameStarted;
+            engine.OnRoundProcessed += DisplayRoundResult;
+            engine.OnGameFinished += DisplayGameFinished;
 
+            // Запускаем игру
+            engine.StartNewGame();
+
+            // Основной цикл ввода
             while (engine.IsGameActive)
             {
-                Console.Write("Введите число: ");
+                Console.Write("Введите ваше число: ");
                 if (int.TryParse(Console.ReadLine(), out int userMove))
                 {
-                    GuessResult result = engine.ProcessAttempt(userMove);
-
-                    if (result == GuessResult.Win)
-                    {
-                        Console.WriteLine($"Поздравляем! Вы угадали за {engine.CurrentAttempts} попыток!");
-                    }
-                    else if (result == GuessResult.GameOver)
-                    {
-                        Console.WriteLine("Попытки закончились. Вы проиграли.");
-                    }
-                    else if (result == GuessResult.Greater)
-                    {
-                        Console.WriteLine("Загаданное число БОЛЬШЕ.");
-                    }
-                    else if (result == GuessResult.Less)
-                    {
-                        Console.WriteLine("Загаданное число МЕНЬШЕ.");
-                    }
+                    engine.ProcessAttempt(userMove);
                 }
                 else
                 {
-                    Console.WriteLine("Пожалуйста, введите корректное число.");
+                    Console.WriteLine("Пожалуйста, введите корректное целое число.");
                 }
             }
 
+            Console.WriteLine("\nНажмите Enter для выхода...");
             Console.ReadLine();
+        }
+
+        // Методы-обработчики, которые реагируют на события:
+
+        static void DisplayGameStarted(int min, int max, int maxAttempts)
+        {
+            Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В ИГРУ 'УГАДАЙ ЧИСЛО'");
+            Console.WriteLine($"Я загадал число от {min} до {max}.");
+            Console.WriteLine($"У вас есть {maxAttempts} попыток. Удачи!");
+            Console.WriteLine("---------------------------------------------");
+        }
+
+        static void DisplayRoundResult(string hint, int attemptsLeft)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Подсказка: Загаданное число {hint} вашего.");
+            Console.ResetColor();
+            Console.WriteLine($"Осталось попыток: {attemptsLeft}");
+            Console.WriteLine("---------------------------------------------");
+        }
+
+        static void DisplayGameFinished(bool isWin, int secretNumber)
+        {
+            Console.WriteLine("---------------------------------------------");
+            if (isWin)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("ПОЗДРАВЛЯЕМ! Вы угадали число и победили!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"ИГРА ОКОНЧЕНА. Попытки закончились.");
+                Console.WriteLine($"Было загадано число: {secretNumber}");
+            }
+            Console.ResetColor();
         }
     }
 }
