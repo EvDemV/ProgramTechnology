@@ -13,7 +13,7 @@ namespace _3_SOLID_Game
         public bool IsGameActive => _isGameActive;
 
         // 1. Объявляем делегаты
-        public delegate void GameStartedHandler(int min, int max, int maxAttempts);
+        public delegate void GameStartedHandler(int min, int max, int maxAttempts, string difficultyName);
         public delegate void RoundProcessedHandler(string hint, int attemptsLeft);
         public delegate void GameFinishedHandler(bool isWin, int secretNumber);
 
@@ -36,7 +36,7 @@ namespace _3_SOLID_Game
             _isGameActive = true;
 
             // Вызываем событие: "Игра началась!"
-            OnGameStarted?.Invoke(_config.MinNumber, _config.MaxNumber, _config.MaxAttempts);
+            OnGameStarted?.Invoke(_config.MinNumber, _config.MaxNumber, _config.MaxAttempts, _config.DifficultyName);
         }
 
         public void ProcessAttempt(int userNumber)

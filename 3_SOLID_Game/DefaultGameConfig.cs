@@ -6,8 +6,9 @@ namespace _3_SOLID_Game
 {
     public class DefaultGameConfig : IGameConfig
     {
-        public int MinNumber { get; } = 1;
-        public int MaxNumber { get; } = 100;
-        public int MaxAttempts { get; } = 10;
+        public int MinNumber => 1;
+        public int MaxNumber => 100;
+        public int MaxAttempts => 10;
+        public string DifficultyName => "Средний";
     }
 }

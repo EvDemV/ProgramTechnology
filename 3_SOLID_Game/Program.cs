@@ -6,8 +6,33 @@ namespace _3_SOLID_Game
     {
         static void Main(string[] args)
         {
-            IGameConfig config = new DefaultGameConfig();
-            GameEngine engine = new GameEngine(config);
+            Console.WriteLine("НАСТРОЙКА ИГРЫ");
+            Console.WriteLine("Выберите уровень сложности:");
+            Console.WriteLine("1 — Легкий (числа 1-10, 5 попыток)");
+            Console.WriteLine("2 — Средний (числа 1-100, 10 попыток)");
+            Console.WriteLine("3 — Сложный (числа 1-500, 7 попыток)");
+            Console.Write("Ваш выбор: ");
+
+            IGameConfig selectedConfig;
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    selectedConfig = new EasyGameConfig();
+                    break;
+                case "3":
+                    selectedConfig = new HardGameConfig();
+                    break;
+                default:
+                    selectedConfig = new DefaultGameConfig(); // По умолчанию средний
+                    break;
+            }
+
+            Console.Clear();
+
+            // Передаем выбранную конфигурацию в движок
+            GameEngine engine = new GameEngine(selectedConfig);
 
             // 3. Подписываемся на события движка игры с помощью оператора +=
             engine.OnGameStarted += DisplayGameStarted;
@@ -37,9 +62,10 @@ namespace _3_SOLID_Game
 
         // Методы-обработчики, которые реагируют на события:
 
-        static void DisplayGameStarted(int min, int max, int maxAttempts)
+        static void DisplayGameStarted(int min, int max, int maxAttempts, string difficultyName)
         {
             Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В ИГРУ 'УГАДАЙ ЧИСЛО'");
+            Console.WriteLine($"Выбранный уровень сложности: {difficultyName}");
             Console.WriteLine($"Я загадал число от {min} до {max}.");
             Console.WriteLine($"У вас есть {maxAttempts} попыток. Удачи!");
             Console.WriteLine("---------------------------------------------");
