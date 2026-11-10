@@ -15,7 +15,7 @@ namespace _3_SOLID_Game
         // 1. Объявляем делегаты
         public delegate void GameStartedHandler(int min, int max, int maxAttempts, string difficultyName);
         public delegate void RoundProcessedHandler(string hint, int attemptsLeft);
-        public delegate void GameFinishedHandler(bool isWin, int secretNumber);
+        public delegate void GameFinishedHandler(bool isWin, int secretNumber, int attemptsUsed);
 
         // 2. Объявляем события на основе этих делегатов
         public event GameStartedHandler OnGameStarted;
@@ -49,7 +49,7 @@ namespace _3_SOLID_Game
             {
                 _isGameActive = false;
                 // Вызываем событие: "Победа!"
-                OnGameFinished?.Invoke(true, _secretNumber);
+                OnGameFinished?.Invoke(true, _secretNumber, _currentAttempts);
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace _3_SOLID_Game
             {
                 _isGameActive = false;
                 // Вызываем событие: "Проигрыш!"
-                OnGameFinished?.Invoke(false, _secretNumber);
+                OnGameFinished?.Invoke(false, _secretNumber, _currentAttempts);
                 return;
             }
 

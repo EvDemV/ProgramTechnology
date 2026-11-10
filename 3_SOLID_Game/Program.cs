@@ -4,8 +4,13 @@ namespace _3_SOLID_Game
 {
     class Program
     {
+        private static IGameConfig _selectedConfig;
+        private static IResultStorage _storage;
+
         static void Main(string[] args)
         {
+            _storage = new FileResultStorage();
+
             Console.WriteLine("НАСТРОЙКА ИГРЫ");
             Console.WriteLine("Выберите уровень сложности:");
             Console.WriteLine("1 — Легкий (числа 1-10, 5 попыток)");
@@ -13,34 +18,31 @@ namespace _3_SOLID_Game
             Console.WriteLine("3 — Сложный (числа 1-500, 7 попыток)");
             Console.Write("Ваш выбор: ");
 
-            IGameConfig selectedConfig;
             string input = Console.ReadLine();
 
             switch (input)
             {
                 case "1":
-                    selectedConfig = new EasyGameConfig();
+                    _selectedConfig = new EasyGameConfig();
                     break;
                 case "3":
-                    selectedConfig = new HardGameConfig();
+                    _selectedConfig = new HardGameConfig();
                     break;
                 default:
-                    selectedConfig = new DefaultGameConfig(); // По умолчанию средний
+                    _selectedConfig = new DefaultGameConfig();
                     break;
             }
 
             Console.Clear();
 
-            // Передаем выбранную конфигурацию в движок
-            GameEngine engine = new GameEngine(selectedConfig);
+            GameEngine engine = new GameEngine(_selectedConfig);
 
-            // 3. Подписываемся на события движка игры с помощью оператора +=
+            // Подписываемся на события движка игры
             engine.OnGameStarted += DisplayGameStarted;
             engine.OnRoundProcessed += DisplayRoundResult;
             engine.OnGameFinished += DisplayGameFinished;
 
-            // Запускаем игру
-            engine.StartNewGame();
+           engine.StartNewGame();
 
             // Основной цикл ввода
             while (engine.IsGameActive)
@@ -60,8 +62,6 @@ namespace _3_SOLID_Game
             Console.ReadLine();
         }
 
-        // Методы-обработчики, которые реагируют на события:
-
         static void DisplayGameStarted(int min, int max, int maxAttempts, string difficultyName)
         {
             Console.WriteLine("ДОБРО ПОЖАЛОВАТЬ В ИГРУ 'УГАДАЙ ЧИСЛО'");
@@ -80,13 +80,13 @@ namespace _3_SOLID_Game
             Console.WriteLine("---------------------------------------------");
         }
 
-        static void DisplayGameFinished(bool isWin, int secretNumber)
+        static void DisplayGameFinished(bool isWin, int secretNumber, int attemptsUsed)
         {
             Console.WriteLine("---------------------------------------------");
             if (isWin)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("ПОЗДРАВЛЯЕМ! Вы угадали число и победили!");
+                Console.WriteLine($"ПОЗДРАВЛЯЕМ! Вы угадали число за {attemptsUsed} попыток и победили!");
             }
             else
             {
@@ -95,6 +95,17 @@ namespace _3_SOLID_Game
                 Console.WriteLine($"Было загадано число: {secretNumber}");
             }
             Console.ResetColor();
+
+            var resultData = new GameResultData
+            {
+                DateTime = DateTime.Now,
+                Difficulty = _selectedConfig.DifficultyName,
+                IsWin = isWin,
+                AttemptsUsed = attemptsUsed
+            };
+
+            _storage.SaveResult(resultData);
+            Console.WriteLine("Результат игры успешно сохранен в статистику.");
         }
     }
 }
