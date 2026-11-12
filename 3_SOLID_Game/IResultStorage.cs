@@ -3,5 +3,6 @@
     public interface IResultStorage
     {
         void SaveResult(GameResultData result);
+        string GetAllStatistics();
     }
 }

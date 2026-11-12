@@ -20,8 +20,17 @@ namespace _3_SOLID_Game
                              $"Результат: {status} | " +
                              $"Попыток использовано: {result.AttemptsUsed}";
 
-            // Дописываем строку в файл (если файла нет, .NET создаст его автоматически)
             File.AppendAllText(_filePath, logLine + Environment.NewLine);
+        }
+
+        public string GetAllStatistics()
+        {
+            if (!File.Exists(_filePath))
+            {
+                return "История игр пока пуста. Сыграйте первую партию!";
+            }
+
+            return File.ReadAllText(_filePath);
         }
     }
 }
